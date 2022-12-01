@@ -109,7 +109,7 @@ jobs:
           tar cvf ${{ env.latest_shortversion }}_patched_vbmeta.tar vbmeta.img
           rm vbmeta.img
 
-      - name: Extract vendor partition
+      - name: Extract super.img
         if: env.need_update == 1
         run: |
           tar xvf ${{ env.ap_tar }} super.img.lz4
@@ -118,11 +118,20 @@ jobs:
           simg2img super.img super_raw.img
           rm super.img
           mv super_raw.img super.img
-          lpunpack --partition=vendor super.img
+          lpunpack super.img
           rm super.img
           [[ -e vendor.img.ext4 ]] && mv vendor.img.ext4 vendor.img
           [[ -e vendor.img ]] && zip ${{ env.latest_shortversion }}_vendor.zip vendor.img
           [[ -e vendor.img ]] && rm vendor.img
+          [[ -e system.img.ext4 ]] && mv system.img.ext4 system.img
+          [[ -e system.img ]] && zip ${{ env.latest_shortversion }}_system.zip system.img
+          [[ -e system.img ]] && rm system.img
+          [[ -e product.img.ext4 ]] && mv product.img.ext4 product.img
+          [[ -e product.img ]] && zip ${{ env.latest_shortversion }}_product.zip product.img
+          [[ -e product.img ]] && rm product.img
+          [[ -e odm.img.ext4 ]] && mv odm.img.ext4 odm.img
+          [[ -e odm.img ]] && zip ${{ env.latest_shortversion }}_odm.zip odm.img
+          [[ -e odm.img ]] && rm odm.img
 
       - name: Update current version
         if: env.need_update == 1
@@ -159,3 +168,6 @@ jobs:
             ${{ env.pit_file }}
             ${{ env.latest_shortversion }}_patched_vbmeta.tar
             ${{ env.latest_shortversion }}_vendor.zip
+            ${{ env.latest_shortversion }}_product.zip
+            ${{ env.latest_shortversion }}_system.zip
+            ${{ env.latest_shortversion }}_odm.zip
